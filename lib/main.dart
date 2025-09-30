@@ -12,22 +12,27 @@ void main() {
 
 // Mood Model - The "Brain" of our app
 class MoodModel with ChangeNotifier {
-  String _currentMood = '😊 use your own img here ';
+  String _currentMood = 'assets/happy.png';
+  Color _backgroundColor = Colors.white;
 
   String get currentMood => _currentMood;
+  Color get backgroundColor => _backgroundColor;
 
   void setHappy() {
-    _currentMood = '😊 use your own img here ';
+    _currentMood = 'assets/happy.png';
+    _backgroundColor = Colors.yellow;
     notifyListeners();
   }
 
   void setSad() {
-    _currentMood = '😢 use your own img here ';
+    _currentMood = 'assets/sad.jpg';
+    _backgroundColor = Colors.blue;
     notifyListeners();
   }
 
   void setExcited() {
-    _currentMood = '🎉 use your own img here ';
+    _currentMood = 'assets/excited.jpeg';
+    _backgroundColor = Colors.orange;
     notifyListeners();
   }
 }
@@ -48,31 +53,41 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Mood Toggle Challenge')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('How are you feeling?', style: TextStyle(fontSize: 24)),
-            SizedBox(height: 30),
-            MoodDisplay(),
-            SizedBox(height: 50),
-            MoodButtons(),
-          ],
-        ),
-      ),
+    return Consumer<MoodModel>(
+      builder: (context, moodModel, child) {
+        return Scaffold(
+          backgroundColor: moodModel.backgroundColor,
+          appBar: AppBar(title: Text('Mood Toggle Challenge')),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('How are you feeling?', style: TextStyle(fontSize: 24)),
+                SizedBox(height: 30),
+                MoodDisplay(),
+                SizedBox(height: 50),
+                MoodButtons(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
-// Widget that displays the current mood
+// Widget that displays the current mood image
 class MoodDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<MoodModel>(
       builder: (context, moodModel, child) {
-        return Text(moodModel.currentMood, style: TextStyle(fontSize: 100));
+        return Image.asset(
+          moodModel.currentMood,
+          height: 150,
+          width: 150,
+          fit: BoxFit.contain,
+        );
       },
     );
   }
@@ -89,19 +104,19 @@ class MoodButtons extends StatelessWidget {
           onPressed: () {
             Provider.of<MoodModel>(context, listen: false).setHappy();
           },
-          child: Text('Happy 😊 use your own img here '),
+          child: Text('happy'),
         ),
         ElevatedButton(
           onPressed: () {
             Provider.of<MoodModel>(context, listen: false).setSad();
           },
-          child: Text('Sad 😢 use your own img here '),
+          child: Text('sad'),
         ),
         ElevatedButton(
           onPressed: () {
             Provider.of<MoodModel>(context, listen: false).setExcited();
           },
-          child: Text('Excited 🎉 use your own img here '),
+          child: Text('excited'),
         ),
       ],
     );
